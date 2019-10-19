@@ -20,8 +20,6 @@ function disconnect(){
   destroy_session();
   load_start();
 }
-
-
 function load_home(){
   load_shared("menu_elements.html","menu_elements");
   load_view(HOME_LINK,"main_content");
@@ -61,12 +59,10 @@ function add_details(trash_id){
     url: 'http://172.16.3.118:5000/garbagesData',
     data: JSON.stringify(dt),
     error: function(e) {
-      $('#modal-description').html("Echec d'ajout des données!");
-      $('#modal1').modal('open');
+      alert("Echec d'ajout des données!")
     },
     success: function(data){
-      $('#modal-description').html("Données ajoutées avec succès");
-      $('#modal1').modal('open');
+      alert("Données ajoutées avec succès!")
     },
     dataType: "json",
     contentType: "application/json"
@@ -81,9 +77,6 @@ function destroy_session(){
 }
 
 function authentification(){
-  create_session();
-  load_home();
-  return;
   let username = $("#username").val();
   let sha_password = sha256($("#password").val()).toUpperCase();
   let credentials = {username: username, hash: sha_password}
