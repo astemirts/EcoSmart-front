@@ -1,0 +1,25 @@
+<style media="screen">
+    #map { height: 600px; }
+</style>
+<div id="map"></div>
+<script type="text/javascript">
+    var air_datas = []
+    $.get("http://172.16.3.118:5000/air", function(data){
+        air_datas = data;
+        var map = L.map('map').setView([air_datas[0].latitude, air_datas[0].longitude], 15);
+        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            maxZoom: 18,
+            id: 'mapbox.streets',
+            accessToken: 'pk.eyJ1IjoibWFpbm5pbmUiLCJhIjoiY2sxeGg2cDQ3MGJtdjNvcWd4aWplMnFtMCJ9.6QkdiBXn6IMmw8MFEe455g'
+        }).addTo(map);
+        for (var i = 0; i < air_datas.length; i++) {
+            var circle = L.circle([air_datas[i].latitude, air_datas[i].longitude], {
+                color: 'red',
+                fillColor: '#f03',
+                fillOpacity: 0.5,
+                radius: 500
+            }).addTo(mymap);
+        }
+    })
+</script>
