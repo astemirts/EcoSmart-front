@@ -4,7 +4,7 @@ const GARBAGE_LINK = "garbage.html";
 
 
 function load_start() {
-    if (window.sessionStorage.getItem("session") == "true") {
+    if (window.sessionStorage.getItem("session") === "true") {
         if (window.sessionStorage.getItem("currentView") != null) {
             load_in(window.sessionStorage.getItem("currentView"), "main_content");
             load_shared("menu_elements.html", "menu_elements");
