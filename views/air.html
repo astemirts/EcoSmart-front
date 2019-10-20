@@ -3,6 +3,7 @@
 </style>
 <div id="map-canvas"></div>
 <script type="text/javascript">
+<<<<<<< HEAD
     $.get("http://172.16.3.118:5000/airData", function(data){
 
     // don't forget to include leaflet-heatmap.js
@@ -47,4 +48,25 @@
     heatmapLayer.setData(testData);
 
     });
+=======
+    var air_datas = []
+    $.get("http://172.16.3.118:5000/airData", function(data){
+        air_datas = data;
+        var map = L.map('map').setView([air_datas[0].latitude, air_datas[0].longitude], 15);
+        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            maxZoom: 18,
+            id: 'mapbox.streets',
+            accessToken: 'pk.eyJ1IjoibWFpbm5pbmUiLCJhIjoiY2sxeGg2cDQ3MGJtdjNvcWd4aWplMnFtMCJ9.6QkdiBXn6IMmw8MFEe455g'
+        }).addTo(map);
+
+        for (var i = 0; i < air_datas.length; i++) {
+            var circle = L.circle([air_datas[i].latitude, air_datas[i].longitude], {
+                color: 'red',
+                fillOpacity: 0.3,
+                radius: air_datas[i].air_quality * 50
+            }).addTo(map);
+        }
+    })
+>>>>>>> 20f2807dc8b1df7b3baeb3772dab10ec9043d9f3
 </script>

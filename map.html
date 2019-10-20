@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script type="text/javascript" src="./node_modules/polyline-encoded/Polyline.encoded.js">
+	</script>
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />
+	<script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>
+	<title>Leaflet L.Polyline.fromEncoded()</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+	<div id="map" style="width: 600px; height: 400px"></div>
+	<script>
+	var encoded = "_izlhA~pvydF_{geC~{mZ_kwzCn`{nI";
+var polyline = L.polyline(L.PolylineUtil.decode(encoded, 5));
+
+// prints an array of 3 LatLng objects.
+console.log(polyline.getLatLngs());
+	</script>
+</body>
+</html>

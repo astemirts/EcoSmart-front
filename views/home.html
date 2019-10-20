@@ -1,1 +1,71 @@
 <h2>Dashboard</h2>
+<h4 class="container">Evolution de remplissage par rapport au parcours de l'éboueur</h4>
+<canvas id="myChart" class="container" style="max-width: 80%; max-height: 400px;"></canvas>
+<h4 class="container">Evolution de pollution de l'air</h4>
+<canvas id="myChart2" class="container" style="max-width: 80%; max-height: 400px;"></canvas>
+
+<script type="text/javascript">
+  var ctx = document.getElementById('myChart').getContext('2d');
+  $.get("http://172.16.3.118:5000/garbagesData", function(data){
+    var points = []
+    var date = []
+    data.forEach(function(element){
+      points.push(element.filling);
+      date.push(element.date.toString())
+    });
+    var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'line',
+
+        // The data for our dataset
+        data: {
+            labels: date,
+            datasets: [{
+                label: 'Evolution de remplissage',
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: points
+            }]
+        },
+
+        // Configuration options go here
+        options: {}
+    });
+  })
+
+  $.get("http://172.16.3.118:5000/airData", function(data){
+    var pollution = []
+    var hours = []
+    var ctx = document.getElementById('myChart2').getContext('2d');
+    data = data.sort(function(a, b) { return new Date(a.date).getHours() - new Date(b.date).getHours(); });
+    data.forEach(function(element){
+      var hour = new Date(element.date).getHours();
+      var index = hours.indexOf(hour);
+      if (index != -1){
+        pollution[index] += element.air_quality
+      }
+      else{
+        hours.push(hour);
+        pollution.push(element.air_quality);
+      }
+    });
+    var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'bar',
+
+        // The data for our dataset
+        data: {
+            labels: hours,
+            datasets: [{
+                label: 'Evolution de pollution',
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: pollution
+            }]
+        },
+
+        // Configuration options go here
+        options: {}
+    });
+  })
+</script>
