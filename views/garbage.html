@@ -5,17 +5,41 @@
 <script type="text/javascript">
   var marker_content
   var gb_datas = []
+  var map
   $.get("http://172.16.3.118:5000/garbages", function(data){
     gb_datas = data;
-    var map = L.map('map').setView([gb_datas[0].latitude, gb_datas[0].longitude], 15);
+    map = L.map('map');
+    map.setView([gb_datas[0].latitude, gb_datas[0].longitude], 15);
     map.on("click", function(e){
-      console.log(e)
       var lt = e.latlng.lat
       var lg = e.latlng.lng
-      console.log(lt+" "+lg)
-      var marker = L.marker([lt, lg]).addTo(map);
+      sessionStorage.setItem("origin","{\"latitude\": "+lt+", \"longitude\": "+lg+"}");
+      $('#originText').html("Current origin : "+sessionStorage.getItem("origin"));
+      //var marker = L.marker([lt, lg]).addTo(map);
       //add_garbage(e.latlng.lat,e.latlng.lng)
     })
+
+    $('#compute').on('click', () => {
+      let origin = JSON.parse(sessionStorage.getItem("origin"));
+    console.log(origin);
+    let dt = {latitude: origin.latitude, longitude: origin.longitude}
+    $.ajax({
+      type: 'POST',
+      url: 'http://172.16.3.118:5000/route',
+      data: JSON.stringify(dt),
+      error: function(e) {
+        alert("Echec d'obtention de la route!")
+        console.log(JSON.stringify(dt))
+      },
+      success: function(data){
+        let polyLine = L.polyline(JSON.parse(data).polyline, {color : 'green'}).addTo(map);
+        map.fitBounds(polyLine.getBounds());
+      },
+      dataType: "text",
+      contentType: "application/json"
+    });
+    })
+
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,
@@ -28,5 +52,7 @@
       marker.bindPopup(marker_content).openPopup();
     }
   })
+
 </script>
-<button type="button" class="btn btn-primary" onclick="get_path(50,5)" name="button">Définir point de départ et calculer le chemin</button>
+<p id="originText"></p>
+<button type="button" class="btn btn-primary" id="compute" name="button">Calculer le chemin depuis la position</button>

@@ -91,24 +91,6 @@ function add_garbage(lat,lng){
   load_garbage_page();
 }
 
-function get_path(lt, lg){
-  let dt = {latitude: lt, longitude: lg}
-  $.ajax({
-    type: 'POST',
-    url: 'http://172.16.3.118:5000/route',
-    data: JSON.stringify(dt),
-    error: function(e) {
-      alert("Echec d'obtention de la route!")
-      console.log(JSON.stringify(dt))
-    },
-    success: function(data){
-      console.log(data);
-    },
-    dataType: "text",
-    contentType: "application/json"
-  });
-}
-
 function delete_garbage(trash_id){
   let dt = {id: trash_id}
   $.ajax({
