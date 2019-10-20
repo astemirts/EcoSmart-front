@@ -53,7 +53,8 @@ function load_air_page(){
 }
 
 function add_details(trash_id){
-  let dt = {id: trash_id, filling: parseFloat($("#txt_"+trash_id).val())}
+  console.log($("#frng_"+trash_id).val())
+  let dt = {id: trash_id, filling: parseFloat($("#frng_"+trash_id).val()/100.0)}
   $.ajax({
     type: 'POST',
     url: 'http://172.16.3.118:5000/garbagesData',
@@ -64,8 +65,59 @@ function add_details(trash_id){
     success: function(data){
       alert("Données ajoutées avec succès!")
     },
-    dataType: "json",
+    dataType: "text",
     contentType: "application/json"
+  });
+}
+
+function add_garbage(lat,lng){
+  let dt = {lat: lat, lng: lng}
+  $.ajax({
+    type: 'POST',
+    url: 'http://172.16.3.118:5000/add',
+    data: JSON.stringify(dt),
+    error: function(e) {
+      alert("Echec d'ajout de poubelle!")
+    },
+    success: function(data){
+      alert("Poubelle ajoutée avec succès!")
+    },
+    dataType: "text",
+    contentType: "application/json"
+  });
+  load_garbage_page();
+}
+
+function get_path(lt, lg){
+  let dt = {latitude: lt, longitude: lg}
+  $.ajax({
+    type: 'POST',
+    url: 'http://172.16.3.118:5000/route',
+    data: JSON.stringify(dt),
+    error: function(e) {
+      alert("Echec d'obtention de la route!")
+      console.log(JSON.stringify(dt))
+    },
+    success: function(data){
+      console.log(data);
+    },
+    dataType: "text",
+    contentType: "application/json"
+  });
+}
+
+function delete_garbage(trash_id){
+  let dt = {id: trash_id}
+  $.ajax({
+    type: 'DELETE',
+    url: 'http://172.16.3.118:5000/garbages/'+trash_id,
+    error: function(e) {
+      alert("Echec de suppression de la poubelle!")
+    },
+    success: function(data){
+      alert("Poubelle supprimée avec succès!")
+      load_garbage_page();
+    }
   });
 }
 

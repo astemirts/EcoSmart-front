@@ -3,10 +3,19 @@
 </style>
 <div id="map"></div>
 <script type="text/javascript">
+  var marker_content
   var gb_datas = []
   $.get("http://172.16.3.118:5000/garbages", function(data){
     gb_datas = data;
     var map = L.map('map').setView([gb_datas[0].latitude, gb_datas[0].longitude], 15);
+    map.on("click", function(e){
+      console.log(e)
+      var lt = e.latlng.lat
+      var lg = e.latlng.lng
+      console.log(lt+" "+lg)
+      var marker = L.marker([lt, lg]).addTo(map);
+      //add_garbage(e.latlng.lat,e.latlng.lng)
+    })
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,
@@ -14,18 +23,10 @@
     accessToken: 'pk.eyJ1IjoibWFpbm5pbmUiLCJhIjoiY2sxeGg2cDQ3MGJtdjNvcWd4aWplMnFtMCJ9.6QkdiBXn6IMmw8MFEe455g'
     }).addTo(map);
     for (var i = 0; i < gb_datas.length; i++) {
+      marker_content = marker_content = '<div class="" style="width:300px; height:100px;"><label for="filling-range">Current filling</label><input type="range" min="0" max="100" step="5" value="0" id="frng_'+gb_datas[i].id+'"><div class="left"><button type="submit" class="btn" onclick="add_details('+gb_datas[i].id+')">Submit</button></div><div class="right">Last statement: 25/06/2019</div></div><div><button type="submit" onclick="delete_garbage('+gb_datas[i].id+')">Supprimer la poubelle</button></div>'
       var marker = L.marker([gb_datas[i].latitude, gb_datas[i].longitude]).addTo(map);
-      marker.bindPopup(gb_datas[i].id+'<hr><br><label>Taux de remplissage:</label><input type="text" id="txt_'+gb_datas[i].id+'"/><br><button onclick="add_details('+gb_datas[i].id+')">Ajouter le taux</button>').openPopup();
+      marker.bindPopup(marker_content).openPopup();
     }
   })
 </script>
-
-<!-- Modal Structure -->
-<div id="modal1" class="modal">
-    <div class="modal-content">
-      <p id="modal-description">A bunch of text</p>
-    </div>
-    <div class="modal-footer">
-      <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
-    </div>
-</div>
+<button type="button" class="btn btn-primary" onclick="get_path(50,5)" name="button">Définir point de départ et calculer le chemin</button>
