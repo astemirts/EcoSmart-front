@@ -4,6 +4,7 @@
 <div id="map"></div>
 <script type="text/javascript">
   var marker_content
+  var origin_marker
   var gb_datas = []
   var map
   $.get("http://172.16.3.118:5000/garbages", function(data){
@@ -14,7 +15,15 @@
       var lt = e.latlng.lat
       var lg = e.latlng.lng
       sessionStorage.setItem("origin","{\"latitude\": "+lt+", \"longitude\": "+lg+"}");
-      $('#originText').html("Current origin : "+sessionStorage.getItem("origin"));
+      if (origin_marker != undefined){
+        map.removeLayer(origin_marker);
+      }
+      origin_marker = new L.Marker([lt, lg], {
+              icon: new L.DivIcon({
+                  className: 'my-div-icon',
+                  html: '<img class="my-div-image" src="rsc/truck.png" style="height: 50px; width: 50px;"/>'
+              })
+          }).addTo(map);
       //var marker = L.marker([lt, lg]).addTo(map);
       //add_garbage(e.latlng.lat,e.latlng.lng)
     })
@@ -32,8 +41,10 @@
         console.log(JSON.stringify(dt))
       },
       success: function(data){
+        clearMap();
         let polyLine = L.polyline(JSON.parse(data).polyline, {color : 'green'}).addTo(map);
         map.fitBounds(polyLine.getBounds());
+        console.log(JSON.parse(data).waypoint_order);
       },
       dataType: "text",
       contentType: "application/json"
@@ -48,11 +59,29 @@
     }).addTo(map);
     for (var i = 0; i < gb_datas.length; i++) {
       marker_content = marker_content = '<div class="" style="width:300px; height:100px;"><label for="filling-range">Current filling</label><input type="range" min="0" max="100" step="5" value="0" id="frng_'+gb_datas[i].id+'"><div class="left"><button type="submit" class="btn" onclick="add_details('+gb_datas[i].id+')">Submit</button></div><div class="right">Last statement: 25/06/2019</div></div><div><button type="submit" onclick="delete_garbage('+gb_datas[i].id+')">Supprimer la poubelle</button></div>'
-      var marker = L.marker([gb_datas[i].latitude, gb_datas[i].longitude]).addTo(map);
-      marker.bindPopup(marker_content).openPopup();
+      //var marker = L.marker([gb_datas[i].latitude, gb_datas[i].longitude]).addTo(map);
+      var marker2 = new L.Marker([gb_datas[i].latitude, gb_datas[i].longitude], {
+              icon: new L.DivIcon({
+                  className: 'my-div-icon',
+                  html: '<img class="my-div-image" src="rsc/trash.png" style="height: 30px; width: 30px;"/>'
+              })
+          }).addTo(map);
+      marker2.bindPopup(marker_content).openPopup();
     }
   })
 
+  function clearMap() {
+    for(i in map._layers) {
+        if(map._layers[i]._path != undefined) {
+            try {
+                map.removeLayer(map._layers[i]);
+            }
+            catch(e) {
+                console.log("problem with " + e + map._layers[i]);
+            }
+        }
+    }
+}
+
 </script>
-<p id="originText"></p>
 <button type="button" class="btn btn-primary" id="compute" name="button">Calculer le chemin depuis la position</button>

@@ -3,6 +3,8 @@
 </style>
 <div id="map-canvas"></div>
 <script type="text/javascript">
+$(document).ready(() => {
+    
     $.get("http://172.16.3.118:5000/airData", function(data){
 
     // don't forget to include leaflet-heatmap.js
@@ -47,4 +49,5 @@
     heatmapLayer.setData(testData);
 
     });
+})
 </script>
